@@ -1,0 +1,101 @@
+.outerBox {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.discussion {
+    margin-bottom: 20px;
+}
+
+.discussion h2 {
+    margin-bottom: 10px;
+}
+
+.discussion-topics {
+    list-style: none;
+    padding: 0;
+}
+
+.discussion-topics li {
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.topic-comments-container {
+    width: 500px;
+    height: 400px;
+    margin-top: 20px;;
+    align-self: flex-start;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.comments {
+    font-size: 16px; /* Adjust the font size as desired */
+}
+
+textarea {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px; /* Increase font size */
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.comment-box {
+    margin-bottom: 10px;
+}
+
+.comment-box strong {
+    margin-right: 5px;
+}
+
+.add-topic-button {
+    font-size: 16px; /* Increase font size */
+    margin-left: 10px; /* Add some margin */
+}
+
+.topic-name {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.topic-name.chat {
+    background-color: #e6e6e6; /* Change background color for topic names in chat */
+}
+
+.arrow {
+    margin-right: 5px; 
+    font-size: 15px;
+}
+  

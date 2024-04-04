@@ -1,0 +1,60 @@
+/* Signup.css */
+
+.section-registration {
+    padding: 20px;
+    
+  }
+  
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    
+  }
+  
+  .registration-form {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .main-heading {
+    text-align: center;
+    color: #333;
+  }
+  
+  .registration-form form div {
+    margin-bottom: 20px;
+  }
+  
+  .registration-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .registration-form input[type="text"],
+  .registration-form input[type="number"],
+  .registration-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .registration-form button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .registration-form button:hover {
+    background-color: #0056b3;
+  }
+  

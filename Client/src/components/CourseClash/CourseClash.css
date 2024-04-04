@@ -1,0 +1,33 @@
+/* CourseClash.css */
+
+.course-clash-button {
+    /* Style for the button container */
+    background-color: #007bff;
+    color: #fff;
+    border: none; 
+    margin: 20px auto; /* Add margin and set auto for horizontal centering */
+    text-align: center;
+    border-radius: 5px; 
+    padding: 12px 20px;
+    font-size: 16px; 
+    cursor: pointer; 
+    display: grid;  
+    justify-content: center;  
+    align-items: center;  
+  }
+  
+  .course-clash-link {
+    /* Style for the hyperlink text */
+    text-decoration: none; /* Remove underline */
+    color: #fff; /* Text color */
+    background-color: #007bff; /* Button background color */
+    padding: 10px 20px; /* Button padding */
+    border: none; /* Remove button border */
+    border-radius: 5px; /* Button border radius */
+  }
+  
+  .course-clash-link:hover {
+    /* Hover effect for the hyperlink */
+    background-color: #0056b3; /* Darker background color */
+  }
+  

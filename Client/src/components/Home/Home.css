@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    margin-top: 10px;
+    text-align: left;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Roboto', sans-serif;
+}
+
+.instructions {
+    margin-bottom: 30px;
+}
+
+.team {
+    margin-top: 30px;
+}
+
+.instructions h2,
+.team h2 {
+    color: #333;
+    font-weight: bold;
+}
+
+.instructions p {
+    color: #555;
+    line-height: 1.6;
+}
+
+.instructions li,
+.team li {
+    margin-bottom: 5px;
+    color: #555;
+    list-style-type: disc; /* Set bullet point type */
+    padding-left: 20px; /* Add indentation */
+    margin-left: 35px; /* Adjust the left margin */
+}
+
+.team ul,
+.instructions ul {
+    padding-left: 0; /* Reset the default padding */
+    margin-top: 0; /* Reset the default margin */
+}
+
+.team-members {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Distribute items evenly */
+}
+
+.team-members > div {
+    flex: 0 0 calc(30% - 20px); /* Adjust width to fit 3 items per row with margin */
+    margin-bottom: 20px; /* Add margin below each item */
+    min-width: 250px; /* Set minimum width */
+    background-color: #fff; /* Add a white background color */
+    border-radius: 5px; /* Add border radius to create rounded corners */
+    padding: 20px; /* Add padding to create some space around the content */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+}

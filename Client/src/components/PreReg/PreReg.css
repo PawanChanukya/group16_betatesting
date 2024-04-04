@@ -1,0 +1,99 @@
+.pre-registration {
+  font-family: Arial, sans-serif;
+  max-width: 1000px; /* Increased width */
+  margin: 0 auto; /* Center align */
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.add-course {
+  margin-bottom: 20px;
+}
+
+.add-course input[type="number"],
+.add-course input[type="text"],
+.add-course select,
+.add-course button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+
+.course-list table,
+.timetable table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.timetable th:first-child,
+.timetable td:first-child {
+  width: 10%; /* Set width for the time column */
+}
+
+.timetable td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+  width: calc(90% / 7); /* Set width to 1/8th of the table width */
+  height: 50px; /* Set fixed height for table cells */
+}
+
+.course-list th,
+.timetable th,
+.course-list td,
+.timetable td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.course-list th,
+.timetable th {
+  background-color: #f2f2f2;
+}
+
+.course-list tbody tr:nth-child(even),
+.timetable tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.course-list button {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.course-list button:hover {
+  background-color: #ff3336;
+}
+
+.timetable .timetable-cell {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.timetable .course-info,
+.timetable .clash-cell .course-info {
+  background-color: lightskyblue; /* Set the default background color */
+  text-align: center;
+  border-radius: 2px; /* Rounded corners */
+  width: 100%; /* Ensure course info spans entire cell width */
+  height: 100%; /* Ensure course info spans entire cell height */
+}
+
+.timetable .clash-cell .course-info {
+  background-color: coral; /* Set background color for clashed courses */
+  color: white; /* Set text color for clashed courses */
+}
+
+
+
+.add-course-button {
+  text-align: right;
+  margin-bottom: 10px;
+}
