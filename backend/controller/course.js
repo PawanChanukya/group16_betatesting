@@ -13,24 +13,27 @@ exports.createCourse=async(req,res)=>{
             credits,
             branch,
             timing,
-            instructor
+            instructor,
+            status
         }=req.body;
-
+        console.log(courseId,
+            courseName,
+            credits,
+            branch,
+            timing,
+            instructor,
+            status)
         //validation
-        if(!courseName || !credits || !courseId || !branch || !timing){
+        if(!courseName || !credits || !courseId || !branch || !timing || !status){
             return res.status(400).json({
                 success:false,
                 message:"All feilds are required,"
             });
         }
-    
         //creating time table 
         let arr=timing.split(',')
-        console.log(timing);
-        console.log(arr);
         const timeTable=[];
         for(let element of arr){
-            console.log("elemnt",element);
             element=element.trim();
             
             let day=element.split(" ")[0].trim();
@@ -43,22 +46,20 @@ exports.createCourse=async(req,res)=>{
             })
             timeTable.push(newTimeTable);
         }
-
        const newCourse=await Course.create({
             courseId,
             courseName,
             credits,
-            instructor:instructor,
-            branch:branch,
-            timing:timeTable.map((t)=>(t._id))
+            instructor,
+            branch,
+            timing:timeTable.map((t)=>(t._id)),
+            status
         });
-
         //add the new course to time table
         for(let t of timeTable){
             t.course=newCourse._id;
             t.save();
         }
-
         //return response
         return res.status(200).json({
             success:true,
@@ -80,7 +81,8 @@ exports.createCourse=async(req,res)=>{
 exports.getAllCourses=async (req,res)=>{
     try{
         const allCourses=await Course.find({},{
-            studentsEnrolled:0
+            studentsEnrolled:0,
+            __v:0
         }).populate('timing').
         exec();
 
@@ -91,7 +93,6 @@ exports.getAllCourses=async (req,res)=>{
         });
 
     }catch(err){
-        console.log(err);
         return res.json({
             success:false,
             message:"Can't fetch course data",
@@ -139,4 +140,74 @@ exports.deleteCourseById=async(req,res)=>{
     }
 }
 
+exports.updateCourseById=async(req, res)=>{
+    try{
+        const id=req.params.id;
+        if(!id){
+            return res.status(400).json({
+                success:false,
+                message:"course id is missing!"
+            });
+        }
+        //fetch data
+        const{
+            courseId,
+            courseName,
+            credits,
+            branch,
+            timing,
+            instructor,
+            status
+        }=req.body;
 
+        //validation
+        if(!courseName || !instructor || !credits || !courseId || !branch || !timing || !status){
+            return res.status(400).json({
+                success:false,
+                message:"All feilds are required,"
+            });
+        }
+        
+        const course=await Course.findOne({_id:id});
+        
+        if(!course){
+            return res.status(400).json({
+                success:false,
+                message:"course not found !"
+            });
+        }
+        const prevTimeTable=course.timing;
+
+        //creating time table 
+        let arr=timing.split(',')
+        const timeTable=[];
+        for(let element of arr){
+            element=element.trim();
+            
+            let day=element.split(" ")[0].trim();
+            let startTime=element.split(" ")[1].split('-')[0].trim();
+            let endTime=element.split(" ")[1].split('-')[1].trim();
+            let newTimeTable= await TimeTable.create({
+                day,
+                startTime,
+                endTime
+            })
+            timeTable.push(newTimeTable);
+        }
+
+        const deletedTimeTable=await TimeTable.deleteMany({ _id: { $in: prevTimeTable } });
+
+        course.courseId=courseId;
+        course.courseName=courseName;
+        course.branch=branch;
+        course.instructor=instructor;
+        course.timing=timeTable.map((t)=>(t._id));
+        course.status=status;
+        course.credits=credits;
+
+        res.status(200).json({success:false,message:"course updated successfully", updatedCourse:course})
+
+    }catch(err){
+        res.status(500).json({success:false,error:"server error!"})
+    }
+}

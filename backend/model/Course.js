@@ -35,7 +35,12 @@ const courseSchema=new mongoose.Schema({
             ref:"TimeTable",
             required:true,
         }
-    ] 
+    ] ,
+    status:{
+        type:String,
+        require: true,
+        default: "Active"
+    }
 
 });
 

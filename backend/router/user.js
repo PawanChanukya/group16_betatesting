@@ -13,6 +13,6 @@ const { auth,isClient} = require("../middleware/auth")
 
 
 router.post("/addCourse", auth, isClient,addCourse)
-router.post("/getUserCourseById", auth,isClient,getUserCourseById)
+router.post("/getUserCourseById", auth,getUserCourseById)
 
 module.exports = router;

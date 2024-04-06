@@ -6,8 +6,8 @@ const router = express.Router()
 const {
     createCourse,
     getAllCourses,
-    getCourseDetails,
     deleteCourseById,
+    updateCourseById
   } = require("../controller/course");
 
   
@@ -16,8 +16,9 @@ const { auth,isClient, isAdmin} = require("../middleware/auth")
 
 
 router.post("/createCourse", auth, isAdmin,createCourse)
-router.get("/getAllCourses", getAllCourses)
+router.get("/getAllCourses", auth, getAllCourses)
 router.delete("/deleteCourseById/:id",auth, isAdmin,deleteCourseById)
+router.post("/updateCourseById/:id",auth, isAdmin, updateCourseById);
 
 
 module.exports = router;

@@ -3,6 +3,8 @@ import {Route,Routes} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.css'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import './style.css';
+import toast, { Toaster } from 'react-hot-toast';
+import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './components/Navbar';
 import Home from './components/Home/Home';
 import PreRegistration from './components/PreReg/PreReg';
@@ -36,6 +38,7 @@ const App =()=>{
       <Route path='/page' element={<Page/>}></Route>
       <Route path='/logout' element={<Logout/>}></Route>
     </Routes>
+    <Toaster containerStyle={{fontSize:"15px"}}/>
     </UserContext.Provider>
     </>
   )

@@ -1,8 +1,9 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../App";
+import toast from 'react-hot-toast';
 
- const Login = () => {
+const Login = () => {
   const {state,dispatch} = useContext(UserContext);
   const [email,setEmail] =useState('');
   const [password,setPassword] =useState('');
@@ -10,6 +11,7 @@ import { UserContext } from "../App";
   const navigate = useNavigate();
 
   const loginUser = async (e)=>{
+    const toastId=toast.loading("Logging in...");
     e.preventDefault();
     try{
       const res = await fetch('/login',{
@@ -25,17 +27,26 @@ import { UserContext } from "../App";
       });
       const data = await res.json()
       if(res.status===200){
+        toast.success("Log in Successfull!",{id:toastId});
         dispatch({type:"USER",payload:true});
-        window.alert("Login Successful");
+
         console.log("Login Successful");
-        navigate('/');
-      }else {
-        window.alert("Invalid Registration");
+        console.log(data); 
+
+        const accountType=await data.user.accountType;
+        if(accountType=='Admin')
+          navigate('/Admin');
+        else
+          navigate('/');
+      }
+      else if(res.status==401) {
+        toast.error("Invalid credential!",{id:toastId});
         console.log("invalid Registration");
       }
-    }catch(e){
-      console.log(e);
-      window.alert("Something went wrong! Please try again!");
+      else throw new Error(res.error);
+    }catch(err){
+      console.log(err);
+      toast.error("Something went wrong! Please try again!",{id:toastId});
     }
   }
 

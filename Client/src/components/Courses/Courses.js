@@ -1,39 +1,50 @@
-import React ,{useEffect,useState} from 'react';
+import React ,{useEffect,useState, useContext} from 'react';
 import './contact.css'; // Import CSS file for styling
 import {useNavigate} from 'react-router-dom';
-
+import toast from 'react-hot-toast';
+import { UserContext } from "../../App"
+ 
 const Courses = () => {
+  const {state,dispatch} = useContext(UserContext);
   const[userData,setUserData] =useState();
   const [courses, setCourses] = useState({allCourse:[], filteredCourse:[]});
   const [status, setStatus]=useState("LOADING");
   const [searchTerm, setSearchTerm] = useState('');
   const navigate =useNavigate();
-  const callCourse =async()=>{
-    try{
-      const res = await fetch('/user',{
-       method:"GET",
-       headers:{
-         Accept:"application/json",
-         "Content-Type":"application/json",
-       },
-       credentials:"include",
-      });
-     if(res.status===200){
-      const data = await res.json(); 
-      const user=await data.user;
-      console.log(user); 
-      setUserData(user);
-      return user._id;
-     }
-     else{
-       const error =new Error(res.error);
-       throw error;
-     }
 
-   }catch(err){
-    navigate('/login');
-   }
-  }
+  const callCoursePage =()=>new Promise(async(resolve, reject)=>{
+    let res;
+    try{
+      res = await fetch('/user',{
+        method:"GET", 
+        headers:{
+        Accept:"application/json",
+        "Content-Type":"application/json",
+        },
+        credentials:"include",
+      });
+      
+      if(res.status===200){
+        dispatch({type:"USER",payload:true});
+        const data = await res.json();
+        const user=await data.user;
+        console.log(user); 
+        resolve(data);
+      }
+    }catch(err){
+      reject(err);// show server error page
+    }finally{
+      if(res && res.status==401){
+        toast.error("Unauthorised! please login");
+        reject(res.error);
+        navigate("/login");
+      }else if(!res || res.status!==200){
+        toast.error("Internal server error !");
+        reject("internal server error !");// show server error page
+      }
+    }
+  });
+
   const fetchCoursesList=async()=>{
     setStatus("LOADING");
     //660d7aaefbe2ec59bb201e3e
@@ -53,24 +64,19 @@ const Courses = () => {
         setCourses({allCourse:allCourses, filteredCourse:allCourses});
         setStatus("SUCCESS");
       }
-      else{
-        const error =new Error(res.error);
-        throw error;
+      else if(res.status===401){
+        toast.error("Unauthorized ! Please Login !")
+        navigate("/login");
       }
-
-    }catch(e){
+      else  throw new Error(res.error);
+    }catch(err){
+      toast.error("something went wrong! Unable to load the course list !");
       setStatus("ERROR");
-      console.log(e);
-      window.alert("Something Went wrong! Unable to load the course List.")
+      console.log(err);
     }
   }
   useEffect(()=>{
-    async function fun(){
-      await callCourse();
-      fetchCoursesList();
-
-    }
-    fun()
+    callCoursePage().then(()=>fetchCoursesList()).catch((error)=>console.log(error));
   },[]);
 
 

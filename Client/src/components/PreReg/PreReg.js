@@ -1,62 +1,55 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect, useContext } from 'react';
 import "./PreReg.css";
 import {useNavigate} from 'react-router-dom';
-
-// "_id": "660d7a9afbe2ec59bb201e3b",
-// "_id": "660d7aaefbe2ec59bb201e3e",
-// 660d7d62a1e15ec50049b45b
- 
+import toast from 'react-hot-toast'
+import { UserContext } from "../../App"
 
 const PreRegistration = () => {
+  const {state,dispatch} = useContext(UserContext);
   const [status, setStatus]=useState("LOADING");
   const[userData,setUserData] =useState();
   const [allCourses, setAllCourses] = useState([]);
   const [searchQuery, setSearchQuery] = useState(''); 
   
-  // State to hold the input values for adding a new course
-  const [newCourseName, setNewCourseName] = useState('');
-  const [newCourseId, setNewCourseId] = useState('');
-  const [newCourseTiming, setNewCourseTiming] = useState('');
-  const [newCourseInstructor, setNewCourseInstructor] = useState('');
-  const [newCourseBranch, setNewCourseBranch] = useState('');
-  const [newCourseCredits, setNewCourseCredits] = useState('');
-
-  // State to manage the visibility of the add course form
-  const [showAddCourseForm, setShowAddCourseForm] = useState(false);
-  
   const navigate =useNavigate();
 
-  const callPrePage =async()=>{
+  const callPrePage =()=>new Promise(async(resolve, reject)=>{
+    let res;
     try{
-       const res = await fetch('/user',{
-        method:"GET",
+      res = await fetch('/preRegistration',{
+        method:"GET", 
         headers:{
-          Accept:"application/json",
-          "Content-Type":"application/json",
+        Accept:"application/json",
+        "Content-Type":"application/json",
         },
         credentials:"include",
-       });
+      });
+      
       if(res.status===200){
+        dispatch({type:"USER",payload:true});
         const data = await res.json();
         const user=await data.user;
         console.log(user); 
-        setUserData(user);
+        resolve(data);
       }
-      else{
-        const error =new Error(res.error);
-        throw error;
-      }
-
     }catch(err){
-      navigate('/login');
+      reject(err);// show server error page
+    }finally{
+      if(res && res.status==401){
+        toast.error("Unauthorised! please login");
+        reject(res.error);
+        navigate("/login");
+      }else if(!res || res.status!==200){
+        toast.error("Internal server error !");
+        reject("internal server error !");// show server error page
+      }
     }
-  }
+  });
 
   const fetchCoursesList=async()=>{
     try{
       setStatus("LOADING");
-      const url=`/getAllCourses`;
-      const res = await fetch(url,{
+      const res = await fetch(`/getAllCourses`,{
         method:"GET",
         headers:{
           Accept:"application/json",
@@ -70,30 +63,24 @@ const PreRegistration = () => {
         console.log(allCourses)
         setAllCourses(allCourses);
         setStatus("SUCCESS");
+      }else if(res.status===401){
+        toast.error("Unauthorized ! Please Login !")
+        navigate("/login");
       }
-      else{
-        const error =new Error(res.error);
-        throw error;
-      }
-
-    }catch(e){
+      else  throw new Error(res.error);
+    }catch(err){
+      toast.error("something went wrong! Unable to load the course list !");
       setStatus("ERROR");
-      console.log(e);
-      window.alert("Something Went wrong! Unable to load the course List.")
+      console.log(err);
     }
   }
-
+ 
   useEffect(()=>{
-    let fun=async()=>{
-      await callPrePage();
-      fetchCoursesList();
-    }
-    fun();
-    
+    callPrePage().then(()=>fetchCoursesList()).catch((error)=>console.log(error));
   },[]);
  
   const handleAddCourseToUser=async(e, id)=>{
-    console.log("adding");
+    const toastId=toast.loading("Adding...");
     e.preventDefault();      
     try{
       const res = await fetch(`/addCourse`,{
@@ -106,103 +93,27 @@ const PreRegistration = () => {
         body: JSON.stringify({"courseId":id})
       });
       if(res.status===200){
+        toast.success("course successfully  added",{id:toastId});
         console.log("course successfully has been added");
-        window.alert("course successfully has been added")
-        // navigate();
+        navigate("/courses");
       }
       else if(res.status===409){
-        window.alert("The course already has been registred by you!")
+        toast.error("The course already has been registered to you!",{id:toastId});
+        navigate("/courses");
+      }else if(res.status===401){
+        toast.error("Unautorized! Please Login!",{id:toastId});
+        navigate("/login");
       }
       else{
         const error =new Error(res.error);
         throw error;
       }
-
     }catch(e){
       console.log(e);
-      window.alert("Something Went wrong! Unable to add the course.")
+      toast.error("Something Went wrong! Unable to add the course.",{id:toastId})
     }
   }
-  
- 
-  // Function to handle add a new course
-  const handleAddNewCourse = async(e) => {
-    e.preventDefault();
-    if (newCourseName.trim() === '' && newCourseId.trim() === '' && newCourseTiming.trim() === '' && newCourseInstructor.trim() === '' && newCourseBranch.trim() === '' && newCourseCredits.trim() === '') {
-    window.alert("All feilds are required!");
-      return null;
-    }  
-      
-    const newCourse = {
-      courseName: newCourseName.trim(),
-      courseId: newCourseId.trim(),
-      timing: newCourseTiming.trim(),
-      instructor: newCourseInstructor.trim(),
-      branch: newCourseBranch.trim(),
-      credits: newCourseCredits.trim()
-    };
-      
-    try{
-      const res = await fetch(`/createCourse`,{
-        method:"POST",
-        headers:{
-          Accept:"application/json",
-          "Content-Type":"application/json",
-        },
-        credentials:"include",
-        body: JSON.stringify(newCourse)
-      });
-      if(res.status===200){
-        await fetchCoursesList();
-      }
-      else{
-        const error =new Error(res.error);
-        throw error;
-      }
 
-    }catch(e){
-      console.log(e);
-      window.alert("Something Went wrong! Unable to add the course.")
-    }
-
-    // Reset input fields
-    setNewCourseName('');
-    setNewCourseId('');
-    setNewCourseInstructor('');
-    setNewCourseBranch('');
-    setNewCourseCredits('');
-    setNewCourseTiming('');
-
-    // Hide the add course form after adding the course
-    setShowAddCourseForm(false);
-  }
-  
-
-  // Function to handle drop a course
-  const handleDropCourse = async(e,id) => { 
-    e.preventDefault();
-    try{
-      const res = await fetch(`/deleteCourseById/${id}`,{
-        method:"DELETE",
-        headers:{
-          Accept:"application/json",
-          "Content-Type":"application/json",
-        },
-        credentials:"include",
-      });
-      if(res.status===204){
-        setAllCourses(allCourses.filter((c)=>(c._id!==id)));
-      }
-      else{
-        const error =new Error(res.error);
-        throw error;
-      }
- 
-    }catch(e){
-      console.log(e);
-      window.alert("Something Went wrong! Unable to drop the course.")
-    }
-  };
   // Function to filter courses based on search query
   const filterCourse =allCourses.filter(course =>{
     if(course){
@@ -252,62 +163,9 @@ const PreRegistration = () => {
   };
   
   
-
   return (
     <div className="pre-registration">
       <h1>Pre-Registration Page</h1>
-
-      {/* Button to toggle the visibility of the add course form */}
-      {
-        userData && userData.accountType &&
-        userData.accountType==="Admin"?
-        <div className="add-course-button">
-          <button onClick={() => setShowAddCourseForm(!showAddCourseForm)}>New Course</button>
-        </div>:""
-      }
-      
-      {/* Add course form */}
-      {showAddCourseForm && (
-        <div className="add-course">
-          <input
-            type="text"
-            placeholder="Course ID"
-            value={newCourseId}
-            onChange={(e) => setNewCourseId(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Course Name"
-            value={newCourseName}
-            onChange={(e) => setNewCourseName(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Timings (Day HH:MM-HH:MM, Day HH:MM-HH:MM, ...)"
-            value={newCourseTiming}
-            onChange={(e) => setNewCourseTiming(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Instructor"
-            value={newCourseInstructor}
-            onChange={(e) => setNewCourseInstructor(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Branch"
-            value={newCourseBranch}
-            onChange={(e) => setNewCourseBranch(e.target.value)}
-          />
-          <input
-            type="number"
-            placeholder="Credits"
-            value={newCourseCredits}
-            onChange={(e) => setNewCourseCredits(e.target.value)}
-          />
-          <button onClick={handleAddNewCourse}>Add Course</button>
-        </div>
-      )}
       <div className="course-list">
         <h2>Course List</h2>
         {/* Search input field */}
@@ -328,8 +186,7 @@ const PreRegistration = () => {
               <th>Credits</th>
               <th>Time slot</th>
               <th>Instructor</th>
-              <th>{userData && userData.accountType?(
-                  userData.accountType==="Admin"?"Drop":"Add"):""}</th> 
+              <th>Add</th> 
             </tr>
           </thead>
           <tbody>
@@ -344,14 +201,7 @@ const PreRegistration = () => {
                 <td>{course.timing.map(timing => `${timing.day} ${timing.startTime}-${timing.endTime}`).join(', ')}</td>
                 <td>{course.instructor}</td>
                 <td>
-                {userData && userData.accountType?
-                    userData.accountType==="Admin"?
-                    <button onClick={(e) => handleDropCourse(e,course._id)}>Drop</button>
-                    :
-                    <button onClick={(e) => handleAddCourseToUser(e,course._id)}>Add</button>
-                  :
-                  ""
-                } 
+                <button onClick={(e) => handleAddCourseToUser(e,course._id)}>Add</button>
                 </td>
               </tr>
             ))}

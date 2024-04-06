@@ -3,19 +3,26 @@ const User =require("../model/User");
 
 
 exports.auth = async(req,res,next)=>{
+    console.log("in auth req came");
     try{
       const token =req.cookies.jwtoken;
+      if(!token){
+        return res.status(401).json({success:false, error:'Unauthorized:No token Provided'});
+      }
       const verifytoken=jwt.verify(token,process.env.SECRET_KEY);
 
       const  rootUser =await User.findOne({_id:verifytoken._id,"tokens.token":token},{password:0,tokens:0});
       if(!rootUser){
-        throw new Error('User not Found');
+        return res.status(401).json({success:false, error:'Unauthorized:No token Provided'});
       }
       req.user=rootUser;
       next();
     }catch(err){
-       res.status(401).send('Unauthorized:No token Provided');
-       console.log(err);
+      console.log(err);
+      return res.status(500).json({
+        success:false,
+        error:'Internal Server Error!'
+      });
     }
 
 }
@@ -27,7 +34,7 @@ exports.isClient = async (req, res, next) => {
     if(req.user.accountType !== "Client") {
       return res.status(401).json({
         success:false,
-        message:'This is a protected route for Students only',
+        error:'This is a protected route for Students only',
       });
     }
     next();
@@ -35,7 +42,7 @@ exports.isClient = async (req, res, next) => {
   catch(error) {
     return res.status(500).json({
       success:false,
-      message:'User role cannot be verified, please try again'
+      error:'User role cannot be verified, please try again'
     })
   }
  }
@@ -44,11 +51,10 @@ exports.isClient = async (req, res, next) => {
  //isAdmin
 exports.isAdmin = async (req, res, next) => {
   try{    
-      console.log("Printing AccountType ", req.user.accountType);
       if(req.user.accountType !== "Admin") {
         return res.status(401).json({
           success:false,
-          message:'This is a protected route for Admin only',
+          error:'This is a protected route for Admin only',
         });
       }
       next();
@@ -56,7 +62,7 @@ exports.isAdmin = async (req, res, next) => {
     catch(error) {
       return res.status(500).json({
         success:false,
-        message:'User role cannot be verified, please try again'
+        error:'User role cannot be verified, please try again'
       })
   }
 }

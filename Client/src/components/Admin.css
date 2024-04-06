@@ -149,3 +149,14 @@ select {
 .button-container button:hover {
   opacity: 0.8; /* Reduce opacity on hover */
 }
+.disabled-btn{
+  background-color: #78a3d0;
+  color: #fff;
+  border: none; 
+  border-radius: 5px; 
+  padding: 12px 20px;
+  font-size: 16px;
+}
+.disabled-btn:hover{
+  background-color: #78a3d0;
+}
