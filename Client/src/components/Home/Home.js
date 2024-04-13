@@ -63,21 +63,10 @@ const Home = () => {
       <div className="team">
         <h2>Contributions by Team_16:</h2>
         <div className="team-members">
-
-          <div>
-            <p>Ch Hemanth Kumar</p>
-            <p>210277</p>
-            <p>chandaka21@iitk.ac.in</p>
-          </div>
           <div>
             <p>Kantule Ritesh Ramdas</p>
             <p>210488</p>
             <p>kantulerr21@iitk.ac.in</p>
-          </div>
-          <div>
-            <p>Rishit Bhutra</p>
-            <p>210857</p>
-            <p>rishitb21@iitk.ac.in</p>
           </div>
           <div>
             <p>Sarthak Paswan</p>
@@ -98,11 +87,6 @@ const Home = () => {
             <p>Surendra Kumar Ahirwar</p>
             <p>211083</p>
             <p>surendrak21@iitk.ac.in</p>
-          </div>
-          <div>
-            <p>Krishna Chandu</p>
-            <p>220832</p>
-            <p>pkrishna22@iitk.ac.in</p>
           </div>
           <div>
             <p>Yash gothwal</p>

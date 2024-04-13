@@ -6,10 +6,10 @@ import { UserContext } from "../../App"
  
 const Courses = () => {
   const {state,dispatch} = useContext(UserContext);
-  const[userData,setUserData] =useState();
+  // const[userData,setUserData] =useState();
   const [courses, setCourses] = useState({allCourse:[], filteredCourse:[]});
   const [status, setStatus]=useState("LOADING");
-  const [searchTerm, setSearchTerm] = useState('');
+  // const [searchTerm, setSearchTerm] = useState('');
   const navigate =useNavigate();
 
   const callCoursePage =()=>new Promise(async(resolve, reject)=>{
@@ -47,7 +47,6 @@ const Courses = () => {
 
   const fetchCoursesList=async()=>{
     setStatus("LOADING");
-    //660d7aaefbe2ec59bb201e3e
     try{
       const res = await fetch(`/getUserCourseById`,{
         method:"POST",
@@ -81,12 +80,11 @@ const Courses = () => {
 
 
   const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-    const filteredCourses = courses.filter(course =>{
-            if(course)
-        	return course.title.toLowerCase().includes(event.target.value.toLowerCase())
-            else
-            	return false
+    const filteredCourses = courses.allCourse.filter(course =>{
+      if(course)
+        return course.courseName.toLowerCase().includes(event.target.value.toLowerCase())
+      else
+        return false
     });
     setCourses((prev)=>({allCourse:prev.allCourse, filteredCourse:filteredCourses}));
   };
@@ -97,15 +95,20 @@ const Courses = () => {
       <input
         type="text"
         placeholder="Search course..."
-        value={searchTerm}
         onChange={handleSearch}
       />
       <ul className="courses-list"> {/* Add a class for styling */}
-        {status!=="SUCCESS"?<h1 style={{textAlign:"center"}}>{status}</h1>:courses.filteredCourse.map(course => (
-          <li key={course._id}>
-            <a href={'#'}>{course.courseId+": "+course.courseName}</a>
-          </li>
-        ))}
+        {status!=="SUCCESS"?
+        <h1 style={{textAlign:"center"}}>{status}</h1>:
+        (
+          courses.filteredCourse.length===0?<span>No course found</span>:
+          courses.filteredCourse.map(course => (
+            <li key={course._id}>
+              <a href={'#'}>{course.courseId+": "+course.courseName}</a>
+            </li>
+          ))
+        )
+      }
       </ul>   
     </div>
   );

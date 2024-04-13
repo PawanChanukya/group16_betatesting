@@ -64,11 +64,12 @@ const Login = () => {
                   <div>
                     <label htmlFor="email">email</label>
                     <input
-                      type="text"
+                      type="email"
                       name="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="email"
+                      required={true}
                     />
                   </div>
 
@@ -80,6 +81,7 @@ const Login = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="password"
+                      required={true}
                     />
                   </div>
                   <br />

@@ -179,6 +179,7 @@ exports.updateCourseById=async(req, res)=>{
         const prevTimeTable=course.timing;
 
         //creating time table 
+        console.log(timing);
         let arr=timing.split(',')
         const timeTable=[];
         for(let element of arr){
@@ -196,15 +197,26 @@ exports.updateCourseById=async(req, res)=>{
         }
 
         const deletedTimeTable=await TimeTable.deleteMany({ _id: { $in: prevTimeTable } });
-
+        // console.log(timeTable)
+        // console.log(deletedTimeTable);
         course.courseId=courseId;
         course.courseName=courseName;
         course.branch=branch;
         course.instructor=instructor;
-        course.timing=timeTable.map((t)=>(t._id));
+        course.timing=[]
         course.status=status;
         course.credits=credits;
-
+        const updatedCourse=await Course.findByIdAndUpdate(course._id,
+            {
+                $push:{
+                    timing:timeTable.map((t)=>(t._id))
+                }
+            },
+            {
+                new:true
+            }
+        )
+        // console.log(updatedCourse)
         res.status(200).json({success:false,message:"course updated successfully", updatedCourse:course})
 
     }catch(err){

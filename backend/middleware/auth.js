@@ -3,7 +3,7 @@ const User =require("../model/User");
 
 
 exports.auth = async(req,res,next)=>{
-    console.log("in auth req came");
+  console.log("req.auth");
     try{
       const token =req.cookies.jwtoken;
       if(!token){

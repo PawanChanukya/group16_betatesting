@@ -1,10 +1,12 @@
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../App";
+import toast from 'react-hot-toast';
 
 const Logout =() =>{
     const navigate = useNavigate();
     const {state,dispatch} = useContext(UserContext);
+        
     useEffect(()=> {
         fetch('http://localhost:8000/logout',{
             method:"POST",
@@ -16,14 +18,14 @@ const Logout =() =>{
         }).then((res) =>{
             console.log("logout sucessfull")
             dispatch({type:"USER",payload:false});
-            window.alert("successfully Logged Out");
+            toast.success("Logged out Successfully!");
             navigate('/login',{replace:true});
             if(res.status!==200){
                 const error =new Error(res.error);
                 throw error;
             }
         }).catch((err)=>{
-            window.alert("Unabled to logged out, please try agian!");
+            toast.error("Unable to log out! Something went wrong!");
             console.log(err);
         })
     })

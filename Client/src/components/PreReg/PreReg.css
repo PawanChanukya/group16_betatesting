@@ -1,6 +1,6 @@
 .pre-registration {
   font-family: Arial, sans-serif;
-  max-width: 1000px; /* Increased width */
+  max-width: 1100px; /* Increased width */
   margin: 0 auto; /* Center align */
   padding: 20px;
 }
@@ -21,8 +21,23 @@ h1 {
   margin-bottom: 10px;
 }
 
+.course-list,
+.added-courses {
+  max-height: 500px; /* Set maximum height for each section */
+  overflow-y: auto; /* Add vertical scrollbar when content overflows */
+}
 
 .course-list table,
+.added-courses table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.timetable {
+  /* Remove max-height and overflow-y properties */
+  margin-bottom: 20px; /* Add margin to create space between timetable and other sections */
+}
+
 .timetable table {
   width: 100%;
   border-collapse: collapse;
@@ -37,13 +52,13 @@ h1 {
   padding: 8px;
   border: 1px solid #ddd;
   text-align: left;
-  width: calc(90% / 7); /* Set width to 1/8th of the table width */
-  height: 50px; /* Set fixed height for table cells */
 }
 
 .course-list th,
+.added-courses th,
 .timetable th,
 .course-list td,
+.added-courses td,
 .timetable td {
   padding: 8px;
   border: 1px solid #ddd;
@@ -51,11 +66,19 @@ h1 {
 }
 
 .course-list th,
+.added-courses th,
 .timetable th {
   background-color: #f2f2f2;
 }
 
+.course-list tbody,
+.added-courses tbody {
+  max-height: calc(600px - 2em); /* Adjust height to exclude table headers */
+  overflow-y: auto;
+}
+
 .course-list tbody tr:nth-child(even),
+.added-courses tbody tr:nth-child(even),
 .timetable tbody tr:nth-child(even) {
   background-color: #f2f2f2;
 }
@@ -82,16 +105,12 @@ h1 {
   background-color: lightskyblue; /* Set the default background color */
   text-align: center;
   border-radius: 2px; /* Rounded corners */
-  width: 100%; /* Ensure course info spans entire cell width */
-  height: 100%; /* Ensure course info spans entire cell height */
 }
 
 .timetable .clash-cell .course-info {
   background-color: coral; /* Set background color for clashed courses */
   color: white; /* Set text color for clashed courses */
 }
-
-
 
 .add-course-button {
   text-align: right;

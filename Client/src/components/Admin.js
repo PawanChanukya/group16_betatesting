@@ -129,13 +129,22 @@ const Admin = () => {
   }
 
   const handleSubmit = async(obj) => {
+    // console.log(formData);
     for(let key in formData){
-      if(key=="status" && !formData[key]){
-        formData[key]="Active"; continue;
-      }
-      if(!formData[key] || !formData[key].trim()){
-        toast.error("All feild are required!");
-        return;
+      //TODO: Also ensure that admin is entering the timing in correct format and correct time, like, Monday 11-12, Friday 1-3
+      if(key==="credits"){
+        if(!(parseInt(formData[key])>=0)){
+          toast.error("Invalid value for credits!");
+          return;
+        }
+      }else{
+        if(key=="status" && !formData[key]){
+          formData[key]="Active"; continue;
+        }
+        if(!formData[key] || !formData[key].trim()){
+          toast.error("All feild are required!");
+          return;
+        }
       }
     }
     const toastId=toast.loading(obj.updating?"Updating": "Adding....")

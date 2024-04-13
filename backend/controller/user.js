@@ -6,7 +6,9 @@ exports.addCourse=async(req,res)=>{
     const {courseId}=req.body;
     const userId=req.user._id;
     try{
+        //find the course and enroll the student in it
         const course=await Course.findById(courseId);
+        console.log("Course: ", course);
         if(!course){
             return res.json({
                 success:false,
@@ -23,7 +25,6 @@ exports.addCourse=async(req,res)=>{
             });
         }
 
-        //find the course and enroll the student in it
         course.studentsEnrolled.push(userId);
         const enrolledCourse=await course.save();
 
@@ -53,9 +54,12 @@ exports.getUserCourseById=async(req, res)=>{
     try{
         let _id=req.user._id;
         if(!_id){
-            return res.status(400).json({"error":"course id is missing!"});
+            return res.status(400).json({"error":"user id is missing!"});
         }
-        const userCourse=await User.findOne({_id},{course:1}).populate('courses');
+        const userCourse=await User.findOne({_id},{course:1}).populate('courses').populate({
+            path: 'courses',
+            populate: { path: 'timing'}
+        }).exec();
         if(userCourse){
             res.status(200).json({"userCourse":userCourse.courses});
         }else{
@@ -68,3 +72,55 @@ exports.getUserCourseById=async(req, res)=>{
     }
 }
 
+exports.dropCourseById=async(req, res)=>{
+    try{
+        let courseId=req.params.id;
+        if(!courseId){
+            return res.status(400).json({"error":"course id is missing!"});
+        }
+        courseId= new mongoose.Types.ObjectId(courseId);
+         //find the course and unenroll the student from it
+         const course=await Course.findById(courseId);
+         console.log("Course: ", course);
+         if(!course){
+             return res.json({
+                 success:false,
+                 message:"could not find the course!"
+             });
+        }
+        const updatedCourse=await Course.findByIdAndUpdate(courseId,
+            {
+                $pull:{
+                    studentsEnrolled:req.user._id
+                }
+            },
+            {
+                new:true
+            }
+        );
+        console.log(updatedCourse);
+
+        // remove course from student db
+        const updatedUser=await User.findByIdAndUpdate(req.user._id,
+            {
+                $pull:{
+                    courses:courseId
+                }
+            },
+            {
+                new:true
+            }
+        );
+        console.log("updated user",updatedUser);
+        res.status(200).json({success:true,message:"course has been successfully dropped!"});
+    }catch(err){
+        console.log(err.message);
+        res.status(500).json({success:true, message:"Internal Server Error!"});
+    }
+}
+
+exports.getAllUser=async(req, res)=>{
+    const email=req.body.email;
+    const allUser=await User.find({email},{tokens:1});
+    res.status(200).json({success:true, allUser});
+}

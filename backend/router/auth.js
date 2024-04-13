@@ -35,11 +35,12 @@ router.post('/signup', async (req,res)=>{
             return res.status(422).json({success:false, error:"plzz fiels the field"}); 
         }else {
             let accountType=req.body.accountType||"Client";
-            console.log(accountType);
-            const user= new User({name,email,phone,password, accountType});//TODO
+            // console.log(accountType);
+            const user= new User({name,email,phone,password, accountType});
             await user.save();
             user.password=null;
-            console.log(user);
+            user.tokens=null;
+            // console.log(user);
             res.status(201).json({success:true, message:"succesfully registered", user});
         }
 
@@ -51,10 +52,14 @@ router.post('/signup', async (req,res)=>{
 
 router.post('/login', async (req,res)=>{
     try{
+
+        //TODO: check if user is already signed in, if yes then then don't generate new token
+        
+
         let {email,password} =req.body;
         password=password.trim();
         if(!email || !password){
-            return res.status(400).json({success:false, error:"plzz filled the data"});
+            return res.status(401).json({success:false, error:"plzz filled the data"});
         }
         const userLogedIn =await User.findOne({email:email});
         if(userLogedIn){
@@ -66,6 +71,8 @@ router.post('/login', async (req,res)=>{
             }
             else {
                 console.log("user logged in successfully");
+               
+
                 const token= await userLogedIn.generateAuthToken();
                 userLogedIn.password=null;
                 userLogedIn.tokens=null;
@@ -84,6 +91,7 @@ router.post('/login', async (req,res)=>{
     }
 })
 router.post('/logout' , async (req,res)=>{
+    //TODO: if cookies is not expired, then before clearing token from cookie , remove the token from user db
     res.clearCookie('jwtoken',{path:'/'});
     res.status(200).json({sucess:true, message:"user logout successfull"});
 })
